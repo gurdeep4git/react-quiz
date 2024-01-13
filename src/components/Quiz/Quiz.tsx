@@ -106,7 +106,7 @@ const Quiz: React.FunctionComponent = () => {
                     'left': '50%',
                     'top': '50%',
                     'transform': 'translate(-50%, -50%)'
-                }} className='bg-purple-second rounded-2xl py-24 text-white-text w-11/12 lg:w-4/5'>
+                }} className='bg-purple-second rounded-2xl py-12 lg:py-24 text-white-text w-11/12 lg:w-4/5'>
                     <div className='w-11/12 xl:w-2/4 mx-auto text-center'>
                         {
                             !showResult ? (
@@ -119,7 +119,7 @@ const Quiz: React.FunctionComponent = () => {
                                         }
                                     </div>
                                     <div>
-                                        <p className='text-lg lg:text-3xl font-bold tracking-wide my-12'>Which country does this flag <img className='inline-block w-20' src={question?.flag} alt='flag' /> belong to?</p>
+                                        <p className='text-lg lg:text-3xl font-bold tracking-wide my-6 lg:my-12'>Which country does this flag <img className='inline-block w-20' src={question?.flag} alt='flag' /> belong to?</p>
                                     </div>
                                     <div className='lg:w-11/12 mx-auto'>
                                         <div className='grid gap-6 grid-cols-2'>
@@ -130,7 +130,7 @@ const Quiz: React.FunctionComponent = () => {
                                             }
                                         </div>
                                     </div>
-                                    <div className='flex justify-center pt-20'>
+                                    <div className='flex justify-center pt-10 lg:pt-20'>
                                         {
                                             !hasNext ? (
                                                 <button onClick={onFinishClick} className='font-bold bg-purple-third px-6 py-4 rounded-2xl' type='button'>Finish</button>
