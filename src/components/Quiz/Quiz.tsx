@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { LegacyRef, MutableRefObject, useEffect, useRef, useState } from 'react'
 import ArrowRightImage from '../../assets/arrow-right.svg';
 import { countriesData } from '../../data/countries';
 import { Country } from '../../model/country.model';
@@ -13,6 +13,7 @@ const Quiz: React.FunctionComponent = () => {
     const [result, setResult] = useState<number>(0);
     const [showResult, setShowResult] = useState<Boolean>(false);
     const [retry, setRetry] = useState<boolean>(false)
+    const optionsRefs = useRef<Array<any> | Array<null>>([]);
 
     let question = questions[index];
     let hasNext = index < questions.length - 1;
@@ -63,7 +64,21 @@ const Quiz: React.FunctionComponent = () => {
     useEffect(() => {
         if (option) {
             disable = false;
+
+            if (optionsRefs?.current?.length > 0) {
+                const correctOption = optionsRefs?.current?.find((i) => i?.value === question.answer);
+                const selectedOption = optionsRefs?.current?.find((i) => i?.value === option);
+                if (correctOption.value === selectedOption.value) {
+                    selectedOption.classList.add('bg-green')
+                } else {
+                    selectedOption.classList.add('bg-red')
+                    correctOption.classList.add('bg-green')
+                }
+            }
+
         }
+
+
     }, [option])
 
     const onNextClick = () => {
@@ -87,7 +102,7 @@ const Quiz: React.FunctionComponent = () => {
     const onFinishClick = () => {
         let counter: number = 0;
         for (const key of Object.keys(answers)) {
-            const question = questions.find((i) => i.id === key);
+            const question = questions?.find((i) => i.id === key);
             if (question?.answer === answers[key]) {
                 counter = counter + 1;
             }
@@ -134,7 +149,7 @@ const Quiz: React.FunctionComponent = () => {
                                         <div className='grid gap-6 grid-cols-2'>
                                             {
                                                 question?.options.map((opt, index) => (
-                                                    <button value={opt} onClick={onOptionClick} key={opt + index} className={'font-bold w-full p-4 lg:p-6 rounded-2xl ' + (opt === option ? 'bg-pink' : 'bg-purple-third')} type='button'>{opt}</button>
+                                                    <button ref={(input) => optionsRefs.current[index] = input} value={opt} onClick={onOptionClick} key={opt + index} className={'font-bold w-full p-4 lg:p-6 rounded-2xl bg-purple-third'} type='button'>{opt}</button>
                                                 ))
                                             }
                                         </div>
