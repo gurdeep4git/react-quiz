@@ -1,4 +1,4 @@
-import React, { LegacyRef, MutableRefObject, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ArrowRightImage from '../../assets/arrow-right.svg';
 import { countriesData } from '../../data/countries';
 import { Country } from '../../model/country.model';
@@ -15,21 +15,28 @@ const Quiz: React.FunctionComponent = () => {
     const [retry, setRetry] = useState<boolean>(false)
     const optionsRefs = useRef<Array<any> | Array<null>>([]);
 
-    let question = questions[index];
-    let hasNext = index < questions.length - 1;
-    let disable = option === null;
+    let question: Question = questions[index];
+    let hasNext: boolean = index < questions.length - 1;
+    let disable: boolean = option === null;
 
     const pickRandom = (arr: Array<Country>, count: number): Array<Country> => {
         let _arr = [...arr];
-        return [...Array(count)].map(() => _arr.splice(Math.floor(Math.random() * _arr.length), 1)[0]);
+        return [...Array(count)]?.map(() => _arr?.splice(Math.floor(Math.random() * _arr.length), 1)[0]);
     }
 
     const prepareOptions = (country: Country): Array<string> => {
         const countries = pickRandom(countriesData, 3);
-        const countryNames = countries.map(i => i.name)
+        let countryNames = countries?.map(i => i.name)
         countryNames.push(country.name);
 
-        for (var i = countryNames.length - 1; i > 0; i--) {
+        if (countryNames.some((e, i, arr) => arr.indexOf(e) !== i)) {
+            countryNames = [];
+            const countries = pickRandom(countriesData, 3);
+            countryNames = countries?.map(i => i.name)
+            countryNames.push(country.name);
+        }
+
+        for (var i = countryNames?.length - 1; i > 0; i--) {
             var j = Math.floor(Math.random() * (i + 1));
             var temp = countryNames[i];
             countryNames[i] = countryNames[j];
@@ -39,9 +46,9 @@ const Quiz: React.FunctionComponent = () => {
         return countryNames;
     }
 
-    const prepareQuestions = () => {
+    const prepareQuestions = (): void => {
         const countriesRandom = pickRandom(countriesData, 10);
-        const questions = countriesRandom.map((country: Country) => {
+        const questions = countriesRandom?.map((country: Country) => {
             const id = country.unicode;
             const flag = country.image;
             const answer = country.name;
@@ -53,8 +60,23 @@ const Quiz: React.FunctionComponent = () => {
                 answer
             }
         })
-        console.log(questions)
         setQuestions(questions)
+    }
+
+    const markCorrectOption = (optionsRefs: React.MutableRefObject<any[] | null[]>, question: Question, option: string) => {
+        if (optionsRefs?.current?.length > 0) {
+            const correctOption = optionsRefs?.current?.find((i) => i?.value === question.answer);
+            const selectedOption = optionsRefs?.current?.find((i) => i?.value === option);
+            if (correctOption.value === selectedOption.value) {
+                selectedOption.classList.remove('bg-purple-third');
+                selectedOption.classList.add('bg-green');
+            } else {
+                selectedOption.classList.remove('bg-purple-third');
+                selectedOption.classList.add('bg-red');
+                correctOption.classList.remove('bg-purple-third');
+                correctOption.classList.add('bg-green');
+            }
+        }
     }
 
     useEffect(() => {
@@ -64,39 +86,22 @@ const Quiz: React.FunctionComponent = () => {
     useEffect(() => {
         if (option) {
             disable = false;
-
-            if (optionsRefs?.current?.length > 0) {
-                const correctOption = optionsRefs?.current?.find((i) => i?.value === question.answer);
-                const selectedOption = optionsRefs?.current?.find((i) => i?.value === option);
-                if (correctOption.value === selectedOption.value) {
-                    selectedOption.classList.remove('bg-purple-third');
-                    selectedOption.classList.add('bg-green');
-                } else {
-                    selectedOption.classList.remove('bg-purple-third');
-                    selectedOption.classList.add('bg-red')
-                    correctOption.classList.remove('bg-purple-third');
-                    correctOption.classList.add('bg-green')
-                }
-            }
-
+            markCorrectOption(optionsRefs, question, option);
             optionsRefs?.current?.forEach(i => {
                 i.setAttribute('disabled', true)
             })
-
         }
-
-
     }, [option])
 
-    const onNextClick = () => {
+    const onNextClick = (): void => {
         if (hasNext) {
             setIndex(index + 1)
             setOption(null)
         }
     }
 
-    const onOptionClick = (e: any) => {
-        const selectedOption = e.target.value;
+    const onOptionClick = (e: any): void => {
+        const selectedOption: string = e.target.value;
         setOption(selectedOption);
         setAnswers((prev: any) => {
             return {
@@ -106,7 +111,7 @@ const Quiz: React.FunctionComponent = () => {
         })
     }
 
-    const onFinishClick = () => {
+    const onFinishClick = (): void => {
         let counter: number = 0;
         for (const key of Object.keys(answers)) {
             const question = questions?.find((i) => i.id === key);
@@ -118,13 +123,17 @@ const Quiz: React.FunctionComponent = () => {
         setShowResult(true);
     }
 
-    const onRetryClick = () => {
+    const onRetryClick = (): void => {
         setRetry(true);
         setIndex(0);
         setOption(null)
         setAnswers(null)
         setResult(0)
         setShowResult(false);
+    }
+
+    const assignRefs = (input: any): void => {
+        optionsRefs.current[index] = input;
     }
 
     return (
@@ -155,8 +164,8 @@ const Quiz: React.FunctionComponent = () => {
                                     <div className='lg:w-11/12 mx-auto'>
                                         <div className='grid gap-6 grid-cols-2'>
                                             {
-                                                question?.options.map((opt, index) => (
-                                                    <button ref={(input) => optionsRefs.current[index] = input} value={opt} onClick={onOptionClick} key={opt + index} className={'font-bold w-full p-4 lg:p-6 rounded-2xl bg-purple-third'} type='button'>{opt}</button>
+                                                question?.options?.map((opt, index) => (
+                                                    <button ref={(input) => assignRefs(input)} value={opt} onClick={onOptionClick} key={opt + index} className={'font-bold w-full p-4 lg:p-6 rounded-2xl bg-purple-third'} type='button'>{opt}</button>
                                                 ))
                                             }
                                         </div>
@@ -186,3 +195,4 @@ const Quiz: React.FunctionComponent = () => {
 }
 
 export default Quiz
+
