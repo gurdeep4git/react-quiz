@@ -16,6 +16,7 @@ const Quiz: React.FunctionComponent = () => {
 
     let question = questions[index];
     let hasNext = index < questions.length - 1;
+    let disable = option === null;
 
     const pickRandom = (arr: Array<Country>, count: number): Array<Country> => {
         let _arr = [...arr];
@@ -51,6 +52,7 @@ const Quiz: React.FunctionComponent = () => {
                 answer
             }
         })
+        console.log(questions)
         setQuestions(questions)
     }
 
@@ -58,9 +60,16 @@ const Quiz: React.FunctionComponent = () => {
         prepareQuestions();
     }, [retry])
 
+    useEffect(() => {
+        if (option) {
+            disable = false;
+        }
+    }, [option])
+
     const onNextClick = () => {
         if (hasNext) {
             setIndex(index + 1)
+            setOption(null)
         }
     }
 
@@ -133,9 +142,9 @@ const Quiz: React.FunctionComponent = () => {
                                     <div className='flex justify-center pt-10 lg:pt-20'>
                                         {
                                             !hasNext ? (
-                                                <button onClick={onFinishClick} className='font-bold bg-purple-third px-6 py-4 rounded-2xl' type='button'>Finish</button>
+                                                <button disabled={disable} onClick={onFinishClick} className='font-bold bg-purple-third px-6 py-4 rounded-2xl' type='button'>Finish</button>
                                             ) : (
-                                                <button onClick={onNextClick} className='font-bold bg-purple-third px-6 py-4 rounded-2xl' type='button'>Next <img alt="next" className='inline-block' src={ArrowRightImage} /></button>
+                                                <button disabled={disable} onClick={onNextClick} className='font-bold bg-purple-third px-6 py-4 rounded-2xl' type='button'>Next <img alt="next" className='inline-block' src={ArrowRightImage} /></button>
                                             )
                                         }
                                     </div>

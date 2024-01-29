@@ -10,7 +10,9 @@ module.exports = {
         'purple-second': '#323864',
         'purple-third': '#384170',
         'white-text': '#DFE5F8',
-        'pink': '#C965D3'
+        'pink': '#C965D3',
+        'red': '#e24646',
+        'green': '#35e661'
       }
     },
   },
