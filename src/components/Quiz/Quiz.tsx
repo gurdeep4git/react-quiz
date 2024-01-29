@@ -69,12 +69,19 @@ const Quiz: React.FunctionComponent = () => {
                 const correctOption = optionsRefs?.current?.find((i) => i?.value === question.answer);
                 const selectedOption = optionsRefs?.current?.find((i) => i?.value === option);
                 if (correctOption.value === selectedOption.value) {
-                    selectedOption.classList.add('bg-green')
+                    selectedOption.classList.remove('bg-purple-third');
+                    selectedOption.classList.add('bg-green');
                 } else {
+                    selectedOption.classList.remove('bg-purple-third');
                     selectedOption.classList.add('bg-red')
+                    correctOption.classList.remove('bg-purple-third');
                     correctOption.classList.add('bg-green')
                 }
             }
+
+            optionsRefs?.current?.forEach(i => {
+                i.setAttribute('disabled', true)
+            })
 
         }
 
