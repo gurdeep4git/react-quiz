@@ -132,10 +132,6 @@ const Quiz: React.FunctionComponent = () => {
         setShowResult(false);
     }
 
-    const assignRefs = (input: any): void => {
-        optionsRefs.current[index] = input;
-    }
-
     return (
         <div style={{
             'backgroundImage': 'linear-gradient(to right, #262d56, #222953, #1e2550, #1a214d, #161d4a)'
@@ -165,7 +161,7 @@ const Quiz: React.FunctionComponent = () => {
                                         <div className='grid gap-6 grid-cols-2'>
                                             {
                                                 question?.options?.map((opt, index) => (
-                                                    <button ref={(input) => assignRefs(input)} value={opt} onClick={onOptionClick} key={opt + index} className={'font-bold w-full p-4 lg:p-6 rounded-2xl bg-purple-third'} type='button'>{opt}</button>
+                                                    <button ref={(input) => optionsRefs.current[index] = input} value={opt} onClick={onOptionClick} key={opt + index} className={'font-bold w-full p-4 lg:p-6 rounded-2xl bg-purple-third'} type='button'>{opt}</button>
                                                 ))
                                             }
                                         </div>
